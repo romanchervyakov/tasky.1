@@ -32,7 +32,25 @@ $app->get('/account', function() {
 })->bind('account');
 
 $app->get('/login', function() use ($app) {
-    return $app['twig']->render('auth/form.twig');
+    return $app['twig']->render('auth/form.twig', [
+        'errorMessage' => null,
+    ]);
+})->bind('login');
+
+$app->post('/auth', function() use ($app) {
+
+    $login = $app['request']->get('login');
+    $pass = $app['request']->get('pass');
+
+    $auth = new \Model\Auth($app['pdo']);
+
+    if ($auth->isUserFound($login, $pass)) {
+        return $app->redirect($app['url_generator']->generate('account'));
+    } else {
+        return $app['twig']->render('auth/form.twig', [
+            'errorMessage' => 'Wrong login or password!'
+        ]);
+    }
 });
 
 // party should go on
