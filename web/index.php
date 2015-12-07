@@ -27,8 +27,14 @@ $app->register(new Silex\Provider\UrlGeneratorServiceProvider());
 $app->register(new Silex\Provider\SessionServiceProvider());
 
 // controllers
-$app->get('/account', function() {
-    return 'Auth only';
+$app->get('/account', function() use ($app) {
+    if (null === $app['session']->get('session_login')) {
+        return $app['twig']->render('auth/form.twig', [
+            'errorMessage' => 'You should authenticate first',
+        ]);
+    } else {
+        return 'Auth only for: ' . $app['session']->get('session_login');
+    }
 })->bind('account');
 
 $app->get('/login', function() use ($app) {
@@ -45,6 +51,8 @@ $app->post('/auth', function() use ($app) {
     $auth = new \Model\Auth($app['pdo']);
 
     if ($auth->isUserFound($login, $pass)) {
+        $app['session']->set('session_login', $login);
+
         return $app->redirect($app['url_generator']->generate('account'));
     } else {
         return $app['twig']->render('auth/form.twig', [
@@ -53,5 +61,10 @@ $app->post('/auth', function() use ($app) {
     }
 });
 
-// party should go on
+$app->get('/exit', function() use ($app) {
+    $app['session']->set('session_login', null);
+    return $app->redirect($app['url_generator']->generate('login'));
+});
+
+// party should go on :)
 $app->run();
