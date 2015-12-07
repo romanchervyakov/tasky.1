@@ -2,21 +2,16 @@
 
 namespace Model;
 
-class Auth
+use Model\Generic\Generic;
+
+class Auth extends Generic
 {
-    private $pdo;
-
-    /**
-     * Auth constructor.
-     * @param $pdo \PDO
-     */
-    public function __construct($pdo)
-    {
-        $this->pdo = $pdo;
-    }
-
     public function isUserFound($login, $secret)
     {
+        // sql injection and xss defence
+        $login = htmlspecialchars($login, ENT_QUOTES, 'UTF-8');
+        $secret = htmlspecialchars($secret, ENT_QUOTES, 'UTF-8');
+
         $stmt = $this->pdo->prepare('SELECT * FROM user WHERE login=:login AND secret=:secret');
         $stmt->bindParam(':login', $login);
         $stmt->bindParam(':secret', $secret);

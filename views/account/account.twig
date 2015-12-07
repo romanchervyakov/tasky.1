@@ -1,0 +1,72 @@
+{% extends 'main.twig' %}
+
+{% block content %}
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+
+        <div class="navbar-header">
+            <a class="navbar-brand" href="{{ app.url_generator.generate('account') }}">Tasky.test</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="{{ app.url_generator.generate('account') }}">Tasks</a></li>
+                <li><a href="{{ app.url_generator.generate('login') }}">Log off</a></li>
+            </ul>
+        </div>
+    </nav>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="row">
+        <div class="col-xs-2">
+            <div class="panel panel-info">
+                <div class="panel-heading"><h4>Task type:</h4></div>
+                <div class="panel-body">
+                    <li>
+                        <a href="{{ app.url_generator.generate('account') }}">Queue</a>
+                    </li>
+                    <li>
+                        <a href="{{ app.url_generator.generate('account') }}/success">Success</a>
+                    </li>
+                    <li>
+                        <a href="{{ app.url_generator.generate('account') }}/failed">Failed</a>
+                    </li>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-8">
+            <div class="btn btn-success">Add +</div>
+            <h4>{{ type }} tasks:</h4>
+            <table class="table table-striped table-hover">
+                <tr>
+                    <th width="5%">#id</th>
+                    <th width="75%">title</th>
+                    <th width="10%">type</th>
+                    <th width="10%">action</th>
+                </tr>
+                {% for task in tasksList %}
+                    <tr>
+                        <td>{{ task.id }}</td>
+                        <td>{{ task.title }}</td>
+                        <td>
+                            <span
+                            {% if task.type == 'success' %}
+                                class="label label-success"
+                            {% elseif task.type == 'failed' %}
+                                class="label label-danger"
+                            {% elseif task.type == 'queue' %}
+                                class="label label-default"
+                            {% endif %}
+                            >
+                                {{ task.type }}
+                            </span>
+                        </td>
+                        <td><a href="#">settings</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+    </div>
+
+{% endblock %}

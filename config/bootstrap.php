@@ -2,11 +2,18 @@
 
 require_once __DIR__.'/../vendor/autoload.php';
 
-require_once __DIR__.'/../config/database_test.php';
+
 
 $app = new Silex\Application();
 
-$app['debug'] = true;
+if (ENV == 'TEST') {
+    $app['debug'] = true;
+    require_once __DIR__ . '/../config/database_test.php';
+}
+
+if (ENV == 'PROD') {
+    require_once __DIR__ . '/../config/database_prod.php';
+}
 
 // pdo mysql
 $app['pdo'] = $app->share(function() {

@@ -1,24 +1,47 @@
 <?php
 
+define('ENV', 'TEST');
+
+use Model\Task;
+
 // bootstrap
 $app = require_once __DIR__.'/../config/bootstrap.php';
 
 // controllers
-$app->get('/account', function() use ($app) {
+
+$app->get('/', function() use ($app) {
+    return $app->redirect($app['url_generator']->generate('account'));
+});
+
+$app->get('/account/{type}', function($type) use ($app) {
     if (null === $app['session']->get('session_login')) {
         return $app['twig']->render('auth/form.twig', [
             'errorMessage' => 'You should authenticate first',
         ]);
     } else {
-        return 'Auth only for: ' . $app['session']->get('session_login');
+        $task = new Task($app['pdo']);
+
+        $tasksList = $task->getTasks($type);
+
+        return $app['twig']->render('account/account.twig', [
+            'login' => $app['session']->get('session_login'),
+            'tasksList' => $tasksList,
+            'type' => ucfirst($type),
+        ]);
     }
-})->bind('account');
+})->bind('account')->value('type', 'queue');
 
 $app->get('/login', function() use ($app) {
+    $app['session']->set('session_login', null);
+
     return $app['twig']->render('auth/form.twig', [
         'errorMessage' => null,
     ]);
 })->bind('login');
+
+$app->post('/save', function() {});
+
+$app->get('/delete/{id}', function($id) {});
 
 $app->post('/auth', function() use ($app) {
 
@@ -36,15 +59,6 @@ $app->post('/auth', function() use ($app) {
             'errorMessage' => 'Wrong login or password!'
         ]);
     }
-});
-
-$app->get('/exit', function() use ($app) {
-    $app['session']->set('session_login', null);
-    return $app->redirect($app['url_generator']->generate('login'));
-});
-
-$app->get('/', function() use ($app) {
-    return $app->redirect($app['url_generator']->generate('account'));
 });
 
 // party should go on :)
