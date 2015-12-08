@@ -12,15 +12,16 @@ class Auth extends Generic
         $login = htmlspecialchars($login, ENT_QUOTES, 'UTF-8');
         $secret = htmlspecialchars($secret, ENT_QUOTES, 'UTF-8');
 
-        $stmt = $this->pdo->prepare('SELECT * FROM user WHERE login=:login AND secret=:secret');
+        $stmt = $this->pdo->prepare('SELECT * FROM user WHERE login=:login');
         $stmt->bindParam(':login', $login);
-        $stmt->bindParam(':secret', $secret);
         $stmt->execute();
 
-        if ($stmt->fetchAll()) {
-            return true;
-        } else {
-            return false;
+        if ($stmt->rowCount() > 0) {
+           if (password_verify($secret, $stmt->fetch()['secret'])) {
+               return true;
+           }
         }
+
+        return false;
     }
 }
