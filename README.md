@@ -1,4 +1,1 @@
-# tasky.1
-Organizer for daily tasks
-
-Small pet project for free use :)
+Small todo list organizer, created with help of Silex, Twitter Bootstrap and Twig
