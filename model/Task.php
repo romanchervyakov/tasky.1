@@ -19,13 +19,24 @@ class Task extends Generic
         return $tasks;
     }
 
-    public function save()
+    public function save($title)
     {
-
+        $stmt = $this->pdo->prepare("INSERT INTO task(`title`, `type`) VALUES(:title, 'queue')");
+        $stmt->bindParam(':title', $title);
+        $stmt->execute();
     }
 
     public function delete($id)
     {
+        $stmt = $this->pdo->prepare("UPDATE task SET type='failed' WHERE id=:id");
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+    }
 
+    public function done($id)
+    {
+        $stmt = $this->pdo->prepare("UPDATE task SET type='success' WHERE id=:id");
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
     }
 }

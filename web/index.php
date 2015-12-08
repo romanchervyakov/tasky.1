@@ -4,10 +4,7 @@ define('ENV', 'TEST');
 
 use Model\Task;
 
-// bootstrap
 $app = require_once __DIR__.'/../config/bootstrap.php';
-
-// controllers
 
 $app->get('/', function() use ($app) {
     return $app->redirect($app['url_generator']->generate('account'));
@@ -39,9 +36,22 @@ $app->get('/login', function() use ($app) {
     ]);
 })->bind('login');
 
-$app->post('/save', function() {});
+$app->post('/task/save', function() use ($app) {
+    $title = $app['request']->get('title');
+    $task = new Task($app['pdo']);
+    $task->save($title);
+    return $app->redirect($app['url_generator']->generate('account'));
+})->bind('create');
 
-$app->get('/delete/{id}', function($id) {});
+$app->post('/task/done/{id}', function($id) use ($app) {
+    $task = new Task($app['pdo']);
+    $task->done($id);
+})->bind('done');
+
+$app->post('/task/delete/{id}', function($id) use ($app) {
+    $task = new Task($app['pdo']);
+    $task->delete($id);
+})->bind('delete');
 
 $app->post('/auth', function() use ($app) {
 

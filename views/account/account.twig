@@ -18,24 +18,20 @@
     <br>
     <br>
     <div class="row">
-        <div class="col-xs-2">
-            <div class="panel panel-info">
-                <div class="panel-heading"><h4>Task type:</h4></div>
-                <div class="panel-body">
-                    <li>
-                        <a href="{{ app.url_generator.generate('account') }}">Queue</a>
-                    </li>
-                    <li>
-                        <a href="{{ app.url_generator.generate('account') }}/success">Success</a>
-                    </li>
-                    <li>
-                        <a href="{{ app.url_generator.generate('account') }}/failed">Failed</a>
-                    </li>
-                </div>
-            </div>
-        </div>
         <div class="col-xs-8">
-            <div class="btn btn-success">Add +</div>
+            <form class="form-horizontal" method="post" action="{{ app.url_generator.generate('create') }}">
+                <fieldset>
+                    <div class="form-group">
+                        <div class="col-lg-1">
+                            <button type="submit" class="btn btn-success">Add +</button>
+                        </div>
+                        <div class="col-lg-11">
+                            <input type="text" class="form-control" id="task" name="title">
+                        </div>
+                    </div>
+                </fieldset>
+                </fieldset>
+            </form>
             <h4>{{ type }} tasks:</h4>
             <table class="table table-striped table-hover">
                 <tr>
@@ -50,23 +46,42 @@
                         <td>{{ task.title }}</td>
                         <td>
                             <span
-                            {% if task.type == 'success' %}
-                                class="label label-success"
-                            {% elseif task.type == 'failed' %}
-                                class="label label-danger"
-                            {% elseif task.type == 'queue' %}
-                                class="label label-default"
-                            {% endif %}
+                                    {% if task.type == 'success' %}
+                                        class="label label-success"
+                                    {% elseif task.type == 'failed' %}
+                                        class="label label-danger"
+                                    {% elseif task.type == 'queue' %}
+                                        class="label label-default"
+                                    {% endif %}
                             >
                                 {{ task.type }}
                             </span>
                         </td>
-                        <td><a href="#">settings</a></td>
+                        <td>
+                            {% if task.type == 'queue' %}
+                                <a href="">Done</a>
+                            {% endif %}
+                            <a href="#">Delete</a></td>
                     </tr>
                 {% endfor %}
             </table>
         </div>
-
+        <div class="col-xs-2">
+            <div class="panel panel-primary">
+                <div class="panel-heading"><h4>Task type:</h4></div>
+                <div class="panel-body">
+                    <li>
+                        <a href="{{ app.url_generator.generate('account') }}">Queue</a>
+                    </li>
+                    <li>
+                        <a href="{{ app.url_generator.generate('account') }}/success">Success</a>
+                    </li>
+                    <li>
+                        <a href="{{ app.url_generator.generate('account') }}/failed">Failed</a>
+                    </li>
+                </div>
+            </div>
+        </div>
     </div>
 
 {% endblock %}
