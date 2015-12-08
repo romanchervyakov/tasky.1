@@ -37,21 +37,53 @@ $app->get('/login', function() use ($app) {
 })->bind('login');
 
 $app->post('/task/save', function() use ($app) {
+    if (null === $app['session']->get('session_login')) {
+        return $app['twig']->render('auth/form.twig', [
+            'errorMessage' => 'You should authenticate first',
+        ]);
+    }
+
     $title = $app['request']->get('title');
     $task = new Task($app['pdo']);
     $task->save($title);
     return $app->redirect($app['url_generator']->generate('account'));
 })->bind('create');
 
-$app->post('/task/done/{id}', function($id) use ($app) {
+$app->get('/task/done/{id}', function($id) use ($app) {
+    if (null === $app['session']->get('session_login')) {
+        return $app['twig']->render('auth/form.twig', [
+            'errorMessage' => 'You should authenticate first',
+        ]);
+    }
+
     $task = new Task($app['pdo']);
     $task->done($id);
+    return $app->redirect($app['url_generator']->generate('account'));
 })->bind('done');
 
-$app->post('/task/delete/{id}', function($id) use ($app) {
+$app->get('/task/delete/{id}', function($id) use ($app) {
+    if (null === $app['session']->get('session_login')) {
+        return $app['twig']->render('auth/form.twig', [
+            'errorMessage' => 'You should authenticate first',
+        ]);
+    }
+
     $task = new Task($app['pdo']);
     $task->delete($id);
+    return $app->redirect($app['url_generator']->generate('account'));
 })->bind('delete');
+
+$app->get('/task/remove/{id}', function($id) use ($app) {
+    if (null === $app['session']->get('session_login')) {
+        return $app['twig']->render('auth/form.twig', [
+            'errorMessage' => 'You should authenticate first',
+        ]);
+    }
+
+    $task = new Task($app['pdo']);
+    $task->remove($id);
+    return $app->redirect($app['url_generator']->generate('account'));
+});
 
 $app->post('/auth', function() use ($app) {
 

@@ -59,9 +59,11 @@
                         </td>
                         <td>
                             {% if task.type == 'queue' %}
-                                <a href="">Done</a>
+                                <a href="/task/done/{{ task.id }}">Done</a>
+                                <a href="/task/delete/{{ task.id }}">Missed</a>
+                            {% elseif task.type == 'success' or task.type == 'failed' %}
+                                <a href="/task/remove/{{ task.id }}">Delete</a>
                             {% endif %}
-                            <a href="#">Delete</a></td>
                     </tr>
                 {% endfor %}
             </table>

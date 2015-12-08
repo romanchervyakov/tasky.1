@@ -39,4 +39,11 @@ class Task extends Generic
         $stmt->bindParam(':id', $id);
         $stmt->execute();
     }
+
+    public function remove($id)
+    {
+        $stmt = $this->pdo->prepare("DELETE FROM task WHERE id=:id");
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+    }
 }
